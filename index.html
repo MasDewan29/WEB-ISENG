@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tebak-Tebakan Lucu Tapi Sulit</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: rgb(22, 11, 85);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            max-width: 700px;
+            width: 100%;
+            position: relative;
+            left: 20px;
+            margin-top: 20px;
+            transition: transform 0.2s ease-in-out;
+        }
+        .container:hover {
+            transform: rotate(-2deg) scale(1.05);
+        }
+        input {
+            padding: 15px;
+            width: 90%;
+            margin-top: 15px;
+            font-size: 16px;
+        }
+        button {
+            padding: 15px;
+            background: #01f975;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .hidden {
+            display: none;
+        }
+        .footer {
+            margin-top: 40px;
+            font-size: 16px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div id="loginContainer" class="container">
+        <h2>Login</h2>
+        <input type="email" id="email" placeholder="Masukkan email">
+        <input type="password" id="password" placeholder="Masukkan kata sandi">
+        <button onclick="login()">Masuk</button>
+    </div>
+    
+    <div id="quizContainer" class="container hidden">
+        <h2>Tebak-Tebakan Lucu Tapi Sulit</h2>
+        <div class="question" id="question">Memuat pertanyaan...</div>
+        <p id="timer">Waktu tersisa: 30 detik</p>
+        <input type="text" id="answerInput" placeholder="Jawaban kamu...">
+        <button onclick="checkAnswer()">Cek Jawaban</button>
+        <p class="answer" id="result"></p>
+        <p id="correctAnswer" style="color: red;"></p>
+        <button onclick="nextQuestion()">Soal Berikutnya</button>
+        <p class="end-message" id="endMessage" style="display: none;"></p>
+        <p id="score"></p>
+        <button id="restartButton" class="hidden" onclick="restartQuiz()">Apakah kamu ingin memainkan lagi?</button>
+    </div>
+    <p class="footer">Buat oleh Dhany Dewanto Putra</p>
+
+    <script>
+        let questions = [
+            { question: "Apa yang lebih besar dari gajah?", answer: "bayangan gajah" },
+            { question: "Kenapa ayam berkokok?", answer: "karena tidak bisa menyalak" },
+            { question: "Apa yang kalau dibelah malah bertambah?", answer: "jalan" },
+            { question: "Apa yang selalu ada di langit tapi tidak di bumi?", answer: "huruf L" },
+            { question: "Kenapa air laut asin?", answer: "karena ikan-ikan pada keringetan" },
+            { question: "Apa yang bisa melihat tanpa mata?", answer: "cermin" },
+            { question: "Apa yang bisa terbang tanpa sayap?", answer: "waktu" },
+            { question: "Apa yang selalu naik tapi tidak pernah turun?", answer: "umur" },
+            { question: "Kenapa roda berputar?", answer: "karena kalau loncat namanya bola" },
+            { question: "Apa yang lebih tajam dari pedang?", answer: "lidah" }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let timer;
+        
+        function login() {
+            let email = document.getElementById("email").value;
+            let password = document.getElementById("password").value;
+            if (email && password) {
+                document.getElementById("loginContainer").classList.add("hidden");
+                document.getElementById("quizContainer").classList.remove("hidden");
+                nextQuestion();
+            } else {
+                alert("Masukkan email dan kata sandi yang valid!");
+            }
+        }
+
+        function startTimer() {
+            let timeLeft = 60;
+            document.getElementById("timer").textContent = "Waktu tersisa: " + timeLeft + " detik";
+            timer = setInterval(function() {
+                timeLeft--;
+                document.getElementById("timer").textContent = "Waktu tersisa: " + timeLeft + " detik";
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    checkAnswer();
+                }
+            }, 3000);
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length) {
+                document.getElementById("question").textContent = (currentQuestion + 1) + ". " + questions[currentQuestion].question;
+                document.getElementById("answerInput").value = "";
+                document.getElementById("result").textContent = "";
+                document.getElementById("correctAnswer").textContent = "";
+                startTimer();
+            } else {
+                document.getElementById("quizContainer").innerHTML += `<p>Skor Akhir: ${score}</p>`;
+                document.getElementById("restartButton").classList.remove("hidden");
+            }
+        }
+
+        function checkAnswer() {
+            clearInterval(timer);
+            let answer = document.getElementById("answerInput").value.toLowerCase();
+            if (answer === questions[currentQuestion].answer.toLowerCase()) {
+                document.getElementById("result").textContent = "Benar! 👍";
+                score++;
+            } else {
+                document.getElementById("result").textContent = "Salah! 😢";
+                document.getElementById("correctAnswer").textContent = "Jawaban benar: " + questions[currentQuestion].answer;
+            }
+            currentQuestion++;
+            setTimeout(nextQuestion, 3000);
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById("restartButton").classList.add("hidden");
+            nextQuestion();
+        }
+    </script>
+</body>
+</html>
